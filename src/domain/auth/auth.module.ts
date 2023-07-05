@@ -10,6 +10,7 @@ import { AuthController } from '../auth/auth.controller';
 
 @Module({
   imports: [
+    ConfigModule,
     UserModule,
     PassportModule,
     JwtModule.registerAsync({
