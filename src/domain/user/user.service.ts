@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { getUuid } from '../../common/utils/get-uuid';
 import { UserPersistence } from '../../persistence/user/user.persistence';
+import { USER_ALREADY_EXISTS_ERROR_MESSAGE } from './constants/user-already-exists.error';
 
 @Injectable()
 export class UserService {
@@ -17,7 +18,7 @@ export class UserService {
     const existingUser = await this.userPersistence.findUserByEmail(createUserDTO.email);
 
     if (existingUser) {
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException(USER_ALREADY_EXISTS_ERROR_MESSAGE);
     }
 
     const user = await this.userPersistence.createUser({
