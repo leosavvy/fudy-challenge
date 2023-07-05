@@ -5,9 +5,16 @@ import { AuthModule } from './domain/auth/auth.module';
 import { JwtAuthGuard } from './domain/auth/guards/jwt-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from './domain/user/user.module';
+import { PrismaModule } from './persistence/prisma/prisma.module';
 
 @Module({
-  imports: [UserModule, AuthModule, JwtModule, ConfigModule.forRoot({ isGlobal: true })],
+  imports: [
+    UserModule,
+    AuthModule,
+    JwtModule,
+    PrismaModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+  ],
   providers: [
     {
       provide: APP_GUARD,

@@ -29,7 +29,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config, {
     include: [AuthModule],
   });
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('/v1/docs', app, document);
 
   await app.listen(port, host);
 }

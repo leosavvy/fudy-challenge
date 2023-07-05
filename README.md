@@ -14,6 +14,7 @@ This project presents a streamlined service designed for user creation and authe
   - [Interacting with the Database](#interacting-with-the-database)
   - [Executing End-to-End Tests](#executing-end-to-end-tests)
   - [Performing Unit Tests](#performing-unit-tests)
+- [API Documentation](#api-documentation)
 
 ## Challenge Details
 
@@ -99,5 +100,13 @@ npm run test
 ```
 
 <hr/>
+
+# API Documentation
+
+The API documentation is available at the following endpoint:
+
+```bash
+http://localhost:8002/v1/docs
+```
 
 Please don't forget to update the .env file with your specific environment variables before running the application. Enjoy your development journey!

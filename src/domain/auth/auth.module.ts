@@ -7,19 +7,17 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from 'src/domain/auth/auth.controller';
-import { MailingModule } from '../mailing/mailing.module';
 
 @Module({
   imports: [
     UserModule,
-    MailingModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         return {
           secret: configService.get<string>('SECRET_KEY') || process.env.SECRET_KEY,
-          signOptions: { expiresIn: '10d' },
+          signOptions: { expiresIn: '7d' },
         };
       },
       inject: [ConfigService],
