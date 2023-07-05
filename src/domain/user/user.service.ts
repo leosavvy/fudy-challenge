@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { getUuid } from 'src/common/utils/get-uuid';
-import { UserPersistence } from 'src/persistence/user/user.persistence';
+import { getUuid } from '../../common/utils/get-uuid';
+import { UserPersistence } from '../../persistence/user/user.persistence';
 
 @Injectable()
 export class UserService {

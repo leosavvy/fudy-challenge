@@ -1,23 +1,25 @@
-import { Body, Controller, Get, HttpCode, Logger, Post, UseGuards } from '@nestjs/common';
 import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiHeader,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import { AuthService } from 'src/domain/auth/auth.service';
-import { Public } from 'src/domain/auth/decorators/public.decorator';
-import { LoginDTO } from 'src/domain/auth/dtos/login.dto';
-import { RegisterUserDTO } from 'src/domain/auth/dtos/register.dto';
-import { LocalAuthGuard } from 'src/domain/auth/guards/local-auth.guard';
-import { UserDecorator } from './decorators/user.decorator';
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpException,
+  InternalServerErrorException,
+  Logger,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { LoginResponse } from './types/user-response.payload';
 import { SWAGGER_EMAIL_EXAMPLE } from './constants/swagger/email.example';
-import { getUuid } from 'src/common/utils/get-uuid';
+import { UserDecorator } from './decorators/user.decorator';
+import { LoginResponse } from './types/user-response.payload';
+import { AuthService } from './auth.service';
+import { Public } from './decorators/public.decorator';
+import { RegisterUserDTO } from './dtos/register.dto';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { LoginDTO } from './dtos/login.dto';
+import { getUuid } from '../../common/utils/get-uuid';
 
 @Controller('auth')
 export class AuthController {
@@ -47,8 +49,11 @@ export class AuthController {
     try {
       return await this.authService.register(dto);
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
       this.logger.error(error);
-      throw new Error('There was an error registering the user');
     }
   }
 
@@ -89,8 +94,11 @@ export class AuthController {
 
       return access_token;
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
       this.logger.error(error);
-      throw new Error('There was an error during login');
     }
   }
 
@@ -130,12 +138,5 @@ export class AuthController {
     const { id, password, ...rest } = user;
 
     return rest;
-  }
-
-  // This endpoint is for debugging purposes only
-  // to validate JWT tokens validation is working as expected
-  @Get('validate')
-  async validate() {
-    return true;
   }
 }

@@ -4,7 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from 'src/domain/user/services/user.service';
+import { UserService } from '../../user/user.service';
 import { LoginResponse } from '../types/user-response.payload';
 
 @Injectable()

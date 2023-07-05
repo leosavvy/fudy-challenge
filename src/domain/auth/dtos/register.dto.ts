@@ -15,7 +15,8 @@ export class RegisterUserDTO {
   email: string;
 
   @ApiProperty({
-    description: 'User password',
+    description:
+      'User password - Must be 5 characters at least with 1 uppercase letter, 1 lowercase letter, 1 number and 1 symbol',
     example: SWAGGER_PASSWORD_EXAMPLE,
   })
   @IsStrongPassword({

@@ -1,6 +1,6 @@
 import { Logger, Module } from '@nestjs/common';
-import { UserPersistence } from 'src/persistence/user/user.persistence';
-import { UserService } from './services/user.service';
+import { UserService } from './user.service';
+import { UserPersistence } from '../../persistence/user/user.persistence';
 
 @Module({
   providers: [UserService, UserPersistence, Logger],

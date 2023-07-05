@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as bcryptjs from 'bcryptjs';
-import { RegisterUserDTO } from 'src/domain/auth/dtos/register.dto';
-import { UserService } from 'src/domain/user/services/user.service';
 import { LoginResponse } from './types/user-response.payload';
+import { UserService } from '../user/user.service';
+import { RegisterUserDTO } from './dtos/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -39,6 +39,7 @@ export class AuthService {
 
   async login(email: User['email']) {
     const user = await this.usersService.findByEmail(email);
+
     return this.getLoginResponse(user);
   }
 
