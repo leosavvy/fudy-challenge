@@ -72,7 +72,13 @@ npm run prisma:generate
 3. Start the application in the development mode:
 
 ```bash
-npm run start:dev
+npm run start
+```
+
+This will launch the application at the following endpoint:
+
+```bash
+http://localhost:8002/v1
 ```
 
 ## Interacting with the Database
@@ -104,6 +110,8 @@ npm run test
 # API Documentation
 
 The API documentation is available at the following endpoint:
+
+### Note: Please ensure that you authenticate yourself with a valid token before executing protected endpoints such as /me.
 
 ```bash
 http://localhost:8002/v1/docs

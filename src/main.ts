@@ -22,8 +22,9 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   const config = new DocumentBuilder()
-    .setTitle('Team Tailor Challenge - API')
-    .setDescription('The Team Tailor Challenge API documentation')
+    .setTitle('Fudy - API')
+    .setDescription('Fudy API documentation')
+    .addBearerAuth()
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config, {

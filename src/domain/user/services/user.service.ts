@@ -13,7 +13,7 @@ export class UserService {
 
   async register(
     createUserDTO: Pick<User, 'email' | 'password'>,
-  ): Promise<Omit<User, 'password'> | undefined> {
+  ): Promise<Omit<User, 'password' | 'id'> | undefined> {
     const existingUser = await this.userPersistence.findUserByEmail(createUserDTO.email);
 
     if (existingUser) {
@@ -26,7 +26,7 @@ export class UserService {
       createdAt: new Date(),
     });
 
-    const { password, ...result } = user;
+    const { password, id, ...result } = user;
 
     return result;
   }

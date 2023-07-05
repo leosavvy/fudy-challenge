@@ -1,7 +1,5 @@
 import { PrismaClient, User } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
-
-export const getUuid = (): string => uuidv4();
+import { getUuid } from 'src/common/utils/get-uuid';
 
 const baseUser: Omit<User, 'id' | 'updatedAt' | 'subscriptionId'> = {
   email: 'leonardosolorzano16@gmail.com',

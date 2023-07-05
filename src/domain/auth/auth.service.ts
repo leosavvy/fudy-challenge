@@ -18,7 +18,7 @@ export class AuthService {
 
   async validateUser(
     email: User['email'],
-    password: User['password'],
+    userPassword: User['password'],
   ): Promise<Omit<User, 'password'>> {
     const user = await this.usersService.findByEmail(email);
 
@@ -26,15 +26,15 @@ export class AuthService {
       throw new UnauthorizedException('User not found');
     }
 
-    const isPasswordValid = await bcryptjs.compare(password, user.password);
+    const isPasswordValid = await bcryptjs.compare(userPassword, user.password);
 
-    if (user && isPasswordValid) {
-      const { password, ...result } = user;
-
-      return result;
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid password');
     }
 
-    throw new UnauthorizedException('User not verified');
+    const { password, ...result } = user;
+
+    return result;
   }
 
   async login(email: User['email']) {
