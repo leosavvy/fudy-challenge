@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  db:
+    container_name: fudy_db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: fudy_db
+      POSTGRES_USER: fudy_user
+      POSTGRES_PASSWORD: fudy_password
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+    driver: local
+  dotconfig:
+    driver: local
