@@ -5,14 +5,14 @@ import { AuthModule } from './auth.module';
 import { AuthService } from './auth.service';
 import { SWAGGER_EMAIL_EXAMPLE } from '../../common/swagger/constants/email.example';
 import { SWAGGER_PASSWORD_EXAMPLE } from '../../common/swagger/constants/password.example';
-import { Logger, UnauthorizedException } from '@nestjs/common';
+import { ConsoleLogger, UnauthorizedException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { LoginResponse } from '../../common/types/login-response.payload';
 
 describe('AuthController', () => {
   let controller: AuthController;
   let authService: jest.Mocked<AuthService>;
-  let logger: jest.Mocked<Logger>;
+  let logger: jest.Mocked<ConsoleLogger>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,12 +20,12 @@ describe('AuthController', () => {
     })
       .overrideProvider(AuthService)
       .useValue(getJestMockFor(AuthService))
-      .overrideProvider(Logger)
-      .useValue(getJestMockFor(Logger))
+      .overrideProvider(ConsoleLogger)
+      .useValue(getJestMockFor(ConsoleLogger))
       .compile();
 
     controller = module.get<AuthController>(AuthController);
-    logger = module.get<Logger>(Logger) as jest.Mocked<Logger>;
+    logger = module.get<ConsoleLogger>(ConsoleLogger) as jest.Mocked<ConsoleLogger>;
     authService = module.get<AuthService>(AuthService) as jest.Mocked<AuthService>;
   });
 

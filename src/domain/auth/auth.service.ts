@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import * as bcryptjs from 'bcryptjs';
 import { LoginResponse } from '../../common/types/login-response.payload';
@@ -10,7 +10,6 @@ export class AuthService {
   constructor(
     private readonly usersService: UserService,
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly logger: Logger,
   ) {}
 
   async validateUser(

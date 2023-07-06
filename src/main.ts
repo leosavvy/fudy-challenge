@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AuthModule } from './domain/auth/auth.module';
+import { UserModule } from './domain/user/user.module';
 
 async function bootstrap() {
   const host = process.env.HOST ?? '127.0.0.1';
@@ -28,7 +29,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config, {
-    include: [AuthModule],
+    include: [AuthModule, UserModule],
   });
   SwaggerModule.setup('/v1/docs', app, document);
 

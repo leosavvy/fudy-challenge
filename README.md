@@ -46,6 +46,10 @@ This project capitalizes on Prisma ORM for efficient database communication.
 
 ## Setting up the Database
 
+<hr/>
+Note: This step requires env vars to be correctly defined, otherwise the container will be created with wrong credentials and the application will fail to connect to the database. To solve this, go to docker desktop and remove the database container, then run the following command again.
+<hr/>
+
 This project relies on Docker for the seamless operation of the database. You can start the database with the following command:
 
 ```bash
@@ -54,6 +58,10 @@ npm run db
 ```
 
 ## Launching the Project
+
+### Note: This step requires the [Setting up the Database](#setting-up-the-database) step to be completed.
+
+<hr/>
 
 To get the project running, follow these steps sequentially:
 

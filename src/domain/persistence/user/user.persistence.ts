@@ -1,10 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { Prisma } from '../prisma/prisma.service';
 
 @Injectable()
 export class UserPersistence {
-  constructor(private readonly prisma: Prisma, private readonly logger: Logger) {}
+  constructor(private readonly prisma: Prisma) {}
 
   async findUserByEmail(email: User['email']): Promise<User> {
     return await this.prisma.user.findUnique({

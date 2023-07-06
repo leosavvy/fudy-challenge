@@ -1,21 +1,31 @@
-import { Body, Controller, HttpException, Logger, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { LoginResponse } from 'src/common/types/login-response.payload';
+import { Body, ConsoleLogger, Controller, HttpException, Post } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 import { Public } from '../../common/decorators/public.decorator';
 import { USER_ALREADY_EXISTS_ERROR_MESSAGE } from './constants/user-already-exists.error';
 import { CreateUserDTO } from './dtos/register.dto';
 import { UserService } from './user.service';
 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService, private readonly logger: Logger) {}
+  constructor(private readonly userService: UserService, private readonly logger: ConsoleLogger) {
+    this.logger.setContext(UserController.name);
+  }
 
   @ApiOperation({
     summary: 'Register a new user.',
   })
   @ApiResponse({
     status: 201,
-    description: 'User Created',
+    description: 'Returns created user uuid',
+    content: {
+      'application/json': {
+        example: {
+          uuid: 'b3d7f1e0-0f1a-4e1a-8f1a-0f1a0f1a0f1a',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -32,7 +42,7 @@ export class UserController {
   })
   @Public()
   @Post('register')
-  async register(@Body() dto: CreateUserDTO): Promise<LoginResponse> {
+  async register(@Body() dto: CreateUserDTO): Promise<User['uuid']> {
     try {
       return await this.userService.register(dto);
     } catch (error) {
@@ -40,7 +50,9 @@ export class UserController {
         throw error;
       }
 
-      this.logger.error(error);
+      this.logger.error(
+        `There was an error when trying to register an user: ${JSON.stringify(error)}`,
+      );
     }
   }
 }

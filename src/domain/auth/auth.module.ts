@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { ConsoleLogger, Logger, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from '../auth/auth.controller';
 import { JwtWrapperModule } from '../jwt-wrapper/jwt-wrapper.module';
@@ -10,7 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [UserModule, PassportModule, JwtWrapperModule, ConfigModule],
-  providers: [AuthService, LocalStrategy, JwtStrategy, Logger],
+  providers: [AuthService, LocalStrategy, JwtStrategy, ConsoleLogger],
   exports: [AuthService],
   controllers: [AuthController],
 })

@@ -1,17 +1,17 @@
-import { Logger, UnauthorizedException } from '@nestjs/common';
+import { ConsoleLogger, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SWAGGER_EMAIL_EXAMPLE } from '../../common/swagger/constants/email.example';
 import { SWAGGER_PASSWORD_EXAMPLE } from '../../common/swagger/constants/password.example';
 import { getJestMockFor } from '../../common/utils/get-mock.service';
 import { getUuid } from '../../common/utils/get-uuid';
 import { UserController } from './user.controller';
-import { UserService } from './user.service';
 import { UserModule } from './user.module';
+import { UserService } from './user.service';
 
 describe('UserController', () => {
   let controller: UserController;
   let userService: jest.Mocked<UserService>;
-  let logger: jest.Mocked<Logger>;
+  let logger: jest.Mocked<ConsoleLogger>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -19,12 +19,12 @@ describe('UserController', () => {
     })
       .overrideProvider(UserService)
       .useValue(getJestMockFor(UserService))
-      .overrideProvider(Logger)
-      .useValue(getJestMockFor(Logger))
+      .overrideProvider(ConsoleLogger)
+      .useValue(getJestMockFor(ConsoleLogger))
       .compile();
 
     controller = module.get<UserController>(UserController);
-    logger = module.get<Logger>(Logger) as jest.Mocked<Logger>;
+    logger = module.get<ConsoleLogger>(ConsoleLogger) as jest.Mocked<ConsoleLogger>;
     userService = module.get<UserService>(UserService) as jest.Mocked<UserService>;
   });
 
@@ -66,16 +66,10 @@ describe('UserController', () => {
       });
 
       describe('Given success when registering', () => {
-        it('should return a login response', async () => {
-          const expectedPayload = {
-            access_token: 'test',
-            uuid: getUuid(),
-            email: SWAGGER_EMAIL_EXAMPLE,
-            createdAt: new Date(),
-            updatedAt: null,
-          };
+        it('should return the created user uuid', async () => {
+          const uuid = getUuid();
 
-          jest.spyOn(userService, 'register').mockResolvedValueOnce(expectedPayload);
+          jest.spyOn(userService, 'register').mockResolvedValueOnce(uuid);
           const mockPayload = {
             email: SWAGGER_EMAIL_EXAMPLE,
             password: SWAGGER_PASSWORD_EXAMPLE,
@@ -84,7 +78,7 @@ describe('UserController', () => {
           const response = await controller.register(mockPayload);
 
           expect(userService.register).toBeCalledWith(mockPayload);
-          expect(response).toEqual(expectedPayload);
+          expect(response).toEqual(uuid);
         });
       });
     });

@@ -1,14 +1,14 @@
 import {
   Body,
+  ConsoleLogger,
   Controller,
   Get,
   HttpCode,
   HttpException,
-  Logger,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Public } from '../../common/decorators/public.decorator';
 import { UserDecorator } from '../../common/decorators/user.decorator';
@@ -17,9 +17,12 @@ import { AuthService } from './auth.service';
 import { LoginDTO } from './dtos/login.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly logger: Logger) {}
+  constructor(private readonly authService: AuthService, private readonly logger: ConsoleLogger) {
+    this.logger.setContext(AuthController.name);
+  }
 
   @ApiOperation({
     summary: 'Login with email and password, if there is a match, return a JWT token.',
@@ -62,7 +65,9 @@ export class AuthController {
         throw error;
       }
 
-      this.logger.error(error);
+      this.logger.error(
+        `There was an error when trying to log in an user: ${JSON.stringify(error)}`,
+      );
     }
   }
 

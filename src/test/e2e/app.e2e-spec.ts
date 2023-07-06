@@ -2,13 +2,13 @@ import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../app.module';
-import { SWAGGER_EMAIL_EXAMPLE } from '../../common/swagger/constants/email.example';
 import { SWAGGER_PASSWORD_EXAMPLE } from '../../common/swagger/constants/password.example';
 import { Prisma } from '../../domain/persistence/prisma/prisma.service';
 
 describe('Given /v1 path', () => {
   let app: INestApplication;
   let prismaService: Prisma;
+  const mockEmail = 'jack.sparrow234@captain.pearl';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -21,12 +21,16 @@ describe('Given /v1 path', () => {
     await app.init();
   });
 
+  afterEach(async () => {
+    const mockUser = await prismaService.user.findUnique({ where: { email: mockEmail } });
+
+    if (mockUser) {
+      await prismaService.user.delete({ where: { email: mockEmail } });
+    }
+  });
+
   describe('Given /auth path', () => {
     describe('Given /login path', () => {
-      beforeAll(async () => {
-        await prismaService.user.deleteMany();
-      });
-
       describe('Given non-existent user', () => {
         it('should return 401 Unauthorized response', async () => {
           await request(app.getHttpServer())
@@ -42,11 +46,11 @@ describe('Given /v1 path', () => {
       describe('Given wrong password', () => {
         it('should return 401 Unauthorized response', async () => {
           await request(app.getHttpServer()).post('/auth/register').send({
-            email: SWAGGER_EMAIL_EXAMPLE,
+            email: mockEmail,
             password: SWAGGER_PASSWORD_EXAMPLE,
           });
           const response = await request(app.getHttpServer()).post('/auth/login').send({
-            email: SWAGGER_EMAIL_EXAMPLE,
+            email: mockEmail,
             password: 'wrongpassword',
           });
 
@@ -56,18 +60,15 @@ describe('Given /v1 path', () => {
     });
 
     describe('Given /me path', () => {
-      beforeAll(async () => {
-        await prismaService.user.deleteMany();
-      });
       describe('Given a valid JWT token', () => {
         it('should return 200 OK and user information', async () => {
           await request(app.getHttpServer()).post('/user/register').send({
-            email: SWAGGER_EMAIL_EXAMPLE,
+            email: mockEmail,
             password: SWAGGER_PASSWORD_EXAMPLE,
           });
 
           const responseLogin = await request(app.getHttpServer()).post('/auth/login').send({
-            email: SWAGGER_EMAIL_EXAMPLE,
+            email: mockEmail,
             password: SWAGGER_PASSWORD_EXAMPLE,
           });
 
@@ -79,6 +80,8 @@ describe('Given /v1 path', () => {
 
           expect(response.status).toBe(200);
           expect(response.body).toHaveProperty('email');
+
+          await prismaService.user.delete({ where: { email: mockEmail } });
         });
       });
       describe('Given an invalid JWT token', () => {
@@ -107,7 +110,7 @@ describe('Given /v1 path', () => {
           return request(app.getHttpServer())
             .post('/user/register')
             .send({
-              email: SWAGGER_EMAIL_EXAMPLE,
+              email: mockEmail,
               password: '1234',
             })
             .expect(400);
@@ -116,12 +119,10 @@ describe('Given /v1 path', () => {
       describe('Given valid request', () => {
         describe('Email does not exists', () => {
           it('should return 201 Created response', async () => {
-            await prismaService.user.deleteMany();
-
             return request(app.getHttpServer())
               .post('/user/register')
               .send({
-                email: SWAGGER_EMAIL_EXAMPLE,
+                email: mockEmail,
                 password: SWAGGER_PASSWORD_EXAMPLE,
               })
               .expect(201);
@@ -129,10 +130,15 @@ describe('Given /v1 path', () => {
         });
         describe('Email already exists', () => {
           it('should return 400 Bad request response', async () => {
+            await request(app.getHttpServer()).post('/user/register').send({
+              email: mockEmail,
+              password: SWAGGER_PASSWORD_EXAMPLE,
+            });
+
             return request(app.getHttpServer())
               .post('/user/register')
               .send({
-                email: SWAGGER_EMAIL_EXAMPLE,
+                email: mockEmail,
                 password: SWAGGER_PASSWORD_EXAMPLE,
               })
               .expect(400);

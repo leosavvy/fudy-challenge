@@ -1,11 +1,11 @@
-import { Logger, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './domain/auth/auth.module';
 import { JwtAuthGuard } from './domain/auth/guards/jwt-auth.guard';
-import { JwtModule } from '@nestjs/jwt';
-import { UserModule } from './domain/user/user.module';
 import { PrismaModule } from './domain/persistence/prisma/prisma.module';
+import { UserModule } from './domain/user/user.module';
 
 @Module({
   imports: [
@@ -20,7 +20,6 @@ import { PrismaModule } from './domain/persistence/prisma/prisma.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-    Logger,
   ],
 })
 export class AppModule {
