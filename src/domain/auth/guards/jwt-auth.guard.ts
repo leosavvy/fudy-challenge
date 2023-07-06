@@ -46,7 +46,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     try {
       decodedToken = this.jwtService.verify(token, {
-        secret: this.configService.get('SECRET_KEY'),
+        secret: this.configService.getOrThrow('SECRET_KEY'),
       });
 
       const user = await this.userService.findByEmail(decodedToken.email);
