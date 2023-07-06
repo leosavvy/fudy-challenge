@@ -20,6 +20,7 @@
     "prisma:rollback": "npx prisma migrate down",
     "prisma:reset": "npx prisma migrate reset",
     "db": "docker-compose up db",
+    "db:detach": "docker-compose up -d db",
     "db:stop": "docker-compose stop db"
   },
   "dependencies": {

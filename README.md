@@ -9,6 +9,7 @@ This project presents a streamlined service designed for user creation and authe
 - [Acceptance Criteria](#acceptance-criteria)
 - [Additional Features](#additional-features)
 - [Running the Project](#running-the-project)
+  - [Setting up environment variables](#setting-up-environment-variables)
   - [Setting up the Database](#setting-up-the-database)
   - [Launching the Project](#launching-the-project)
   - [Interacting with the Database](#interacting-with-the-database)
@@ -44,6 +45,22 @@ The challenge was to build a service that incorporates the following endpoints:
 
 This project capitalizes on Prisma ORM for efficient database communication.
 
+## Setting up environment variables
+
+Before running the project, ensure that you have the following environment variables defined in a `.env` file:
+
+```bash
+DATABASE_URL
+SECRET_KEY
+TOKEN_EXPIRATION_TIME
+```
+
+Test values for these variables can be automatically set by running the `bootstrap` script:
+
+```bash
+./bin/bootstrap
+```
+
 ## Setting up the Database
 
 <hr/>
@@ -55,6 +72,12 @@ This project relies on Docker for the seamless operation of the database. You ca
 ```bash
 npm install
 npm run db
+```
+
+> Note: Running npm run db:detach will run the database in the background.
+
+```bash
+npm run db:detach
 ```
 
 ## Launching the Project
@@ -83,11 +106,9 @@ npm run prisma:generate
 npm run start
 ```
 
-This will launch the application at the following endpoint:
+This will launch the application at local host on port 8002:
 
-```bash
-http://localhost:8002/v1
-```
+<a href="http://localhost:8002/v1">Say Hello!</a>
 
 ## Interacting with the Database
 

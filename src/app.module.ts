@@ -6,6 +6,7 @@ import { AuthModule } from './domain/auth/auth.module';
 import { JwtAuthGuard } from './domain/auth/guards/jwt-auth.guard';
 import { PrismaModule } from './domain/persistence/prisma/prisma.module';
 import { UserModule } from './domain/user/user.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserModule } from './domain/user/user.module';
       useClass: JwtAuthGuard,
     },
   ],
+  controllers: [AppController],
 })
 export class AppModule {
   configure(): void {}
