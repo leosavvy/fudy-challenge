@@ -1,29 +1,15 @@
 import { Logger, Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './strategies/local.strategy';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from '../auth/auth.controller';
+import { JwtWrapperModule } from '../jwt-wrapper/jwt-wrapper.module';
+import { UserModule } from '../user/user.module';
+import { AuthService } from './auth.service';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [
-    ConfigModule,
-    UserModule,
-    PassportModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        return {
-          secret: configService.get<string>('SECRET_KEY') || process.env.SECRET_KEY,
-          signOptions: { expiresIn: '7d' },
-        };
-      },
-      inject: [ConfigService],
-    }),
-  ],
+  imports: [UserModule, PassportModule, JwtWrapperModule, ConfigModule],
   providers: [AuthService, LocalStrategy, JwtStrategy, Logger],
   exports: [AuthService],
   controllers: [AuthController],

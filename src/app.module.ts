@@ -5,7 +5,7 @@ import { AuthModule } from './domain/auth/auth.module';
 import { JwtAuthGuard } from './domain/auth/guards/jwt-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from './domain/user/user.module';
-import { PrismaModule } from './persistence/prisma/prisma.module';
+import { PrismaModule } from './domain/persistence/prisma/prisma.module';
 
 @Module({
   imports: [

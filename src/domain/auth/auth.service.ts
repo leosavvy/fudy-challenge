@@ -1,18 +1,15 @@
-import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import * as bcryptjs from 'bcryptjs';
-import { LoginResponse } from './types/user-response.payload';
+import { LoginResponse } from '../../common/types/login-response.payload';
+import { JwtWrapperService } from '../jwt-wrapper/jwt-wrapper.service';
 import { UserService } from '../user/user.service';
-import { RegisterUserDTO } from './dtos/register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UserService,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly jwtWrapperService: JwtWrapperService,
     private readonly logger: Logger,
   ) {}
 
@@ -43,41 +40,11 @@ export class AuthService {
     return this.getLoginResponse(user);
   }
 
-  async register(createUserDTO: RegisterUserDTO): Promise<LoginResponse> {
-    const existingUser = await this.usersService.findByEmail(createUserDTO.email);
-
-    if (existingUser) {
-      throw new BadRequestException('User already exists');
-    }
-
-    const createdUser = await this.usersService.register({
-      ...createUserDTO,
-      password: await bcryptjs.hash(createUserDTO.password, 15),
-    });
-
-    const token = this.signToken({ email: createdUser.email, uuid: createdUser.uuid });
-
-    return {
-      access_token: token,
-      ...createdUser,
-    };
-  }
-
   private getLoginResponse(user: User): Omit<User, 'password' | 'id'> & LoginResponse {
     const { password, id, ...rest } = user;
     return {
-      access_token: this.signToken({ email: user.email, uuid: user.uuid }),
+      access_token: this.jwtWrapperService.signToken({ email: user.email, uuid: user.uuid }),
       ...rest,
     };
-  }
-
-  private signToken(payload: { email: User['email']; uuid: User['uuid'] }) {
-    const secret = this.configService.getOrThrow('SECRET_KEY');
-    const expiresIn = this.configService.getOrThrow('TOKEN_EXPIRATION_TIME');
-
-    return this.jwtService.sign(payload, {
-      secret,
-      expiresIn,
-    });
   }
 }

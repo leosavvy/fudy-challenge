@@ -111,7 +111,7 @@ npm run test
 
 The API documentation is available at the following endpoint:
 
-### Note: Please ensure that you authenticate yourself with a valid token before executing protected endpoints such as /me.
+### Note: Please ensure that you authenticate yourself with a valid token before executing protected endpoints such as /v1/auth/me.
 
 ```bash
 http://localhost:8002/v1/docs

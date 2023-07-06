@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsEmail, IsString, IsStrongPassword } from 'class-validator';
-import { SWAGGER_EMAIL_EXAMPLE } from '../constants/swagger/email.example';
-import { SWAGGER_PASSWORD_EXAMPLE } from '../constants/swagger/password.example';
+import { SWAGGER_EMAIL_EXAMPLE } from '../../../common/swagger/constants/email.example';
+import { SWAGGER_PASSWORD_EXAMPLE } from '../../../common/swagger/constants/password.example';
 
-export class RegisterUserDTO {
+export class CreateUserDTO {
   @ApiProperty({
     description: 'User email',
     example: SWAGGER_EMAIL_EXAMPLE,

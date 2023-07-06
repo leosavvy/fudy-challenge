@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { UserModule } from './user.module';
-import { UserPersistence } from '../../persistence/user/user.persistence';
+import { UserPersistence } from '../persistence/user/user.persistence';
 import { getJestMockFor } from '../../common/utils/get-mock.service';
-import { SWAGGER_EMAIL_EXAMPLE } from '../auth/constants/swagger/email.example';
+import { SWAGGER_EMAIL_EXAMPLE } from '../../common/swagger/constants/email.example';
 import { User } from '@prisma/client';
-import { SWAGGER_PASSWORD_EXAMPLE } from '../auth/constants/swagger/password.example';
+import { SWAGGER_PASSWORD_EXAMPLE } from '../../common/swagger/constants/password.example';
 import { getUuid } from '../../common/utils/get-uuid';
 
 describe('UserService', () => {
@@ -74,12 +74,14 @@ describe('UserService', () => {
         await service.register({ email, password });
 
         expect(userPersistence.findUserByEmail).toBeCalledWith(email);
-        expect(userPersistence.createUser).toBeCalledWith({
-          createdAt: expect.any(Date),
-          email,
-          password,
-          uuid: expect.any(String),
-        });
+        expect(userPersistence.createUser).toBeCalledWith(
+          expect.objectContaining({
+            email,
+            password: expect.any(String),
+            uuid: expect.any(String),
+            createdAt: expect.any(Date),
+          }),
+        );
       });
     });
   });

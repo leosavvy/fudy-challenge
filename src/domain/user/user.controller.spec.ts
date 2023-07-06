@@ -1,0 +1,92 @@
+import { Logger, UnauthorizedException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { SWAGGER_EMAIL_EXAMPLE } from '../../common/swagger/constants/email.example';
+import { SWAGGER_PASSWORD_EXAMPLE } from '../../common/swagger/constants/password.example';
+import { getJestMockFor } from '../../common/utils/get-mock.service';
+import { getUuid } from '../../common/utils/get-uuid';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
+import { UserModule } from './user.module';
+
+describe('UserController', () => {
+  let controller: UserController;
+  let userService: jest.Mocked<UserService>;
+  let logger: jest.Mocked<Logger>;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [UserModule],
+    })
+      .overrideProvider(UserService)
+      .useValue(getJestMockFor(UserService))
+      .overrideProvider(Logger)
+      .useValue(getJestMockFor(Logger))
+      .compile();
+
+    controller = module.get<UserController>(UserController);
+    logger = module.get<Logger>(Logger) as jest.Mocked<Logger>;
+    userService = module.get<UserService>(UserService) as jest.Mocked<UserService>;
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  describe('Given register function', () => {
+    describe('Given call with valid email and password', () => {
+      describe('Given error when registering', () => {
+        describe('Given http exception', () => {
+          it('should throw the exception', async () => {
+            jest.spyOn(userService, 'register').mockRejectedValueOnce(new UnauthorizedException());
+            const mockPayload = {
+              email: SWAGGER_EMAIL_EXAMPLE,
+              password: SWAGGER_PASSWORD_EXAMPLE,
+            };
+
+            await expect(controller.register(mockPayload)).rejects.toThrowError();
+
+            expect(userService.register).toBeCalledWith(mockPayload);
+          });
+        });
+
+        describe('Given unknown error', () => {
+          it('should log the error', async () => {
+            jest.spyOn(userService, 'register').mockRejectedValueOnce(new Error('test'));
+            const mockPayload = {
+              email: SWAGGER_EMAIL_EXAMPLE,
+              password: SWAGGER_PASSWORD_EXAMPLE,
+            };
+
+            await controller.register(mockPayload);
+
+            expect(userService.register).toBeCalledWith(mockPayload);
+            expect(logger.error).toBeCalled();
+          });
+        });
+      });
+
+      describe('Given success when registering', () => {
+        it('should return a login response', async () => {
+          const expectedPayload = {
+            access_token: 'test',
+            uuid: getUuid(),
+            email: SWAGGER_EMAIL_EXAMPLE,
+            createdAt: new Date(),
+            updatedAt: null,
+          };
+
+          jest.spyOn(userService, 'register').mockResolvedValueOnce(expectedPayload);
+          const mockPayload = {
+            email: SWAGGER_EMAIL_EXAMPLE,
+            password: SWAGGER_PASSWORD_EXAMPLE,
+          };
+
+          const response = await controller.register(mockPayload);
+
+          expect(userService.register).toBeCalledWith(mockPayload);
+          expect(response).toEqual(expectedPayload);
+        });
+      });
+    });
+  });
+});
