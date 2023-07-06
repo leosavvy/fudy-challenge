@@ -37,7 +37,7 @@ export class AuthService {
     return result;
   }
 
-  async login(email: User['email']) {
+  async login(email: User['email']): Promise<Omit<User, 'password' | 'id'> & LoginResponse> {
     const user = await this.usersService.findByEmail(email);
 
     return this.getLoginResponse(user);
@@ -63,7 +63,7 @@ export class AuthService {
     };
   }
 
-  private getLoginResponse(user: User) {
+  private getLoginResponse(user: User): Omit<User, 'password' | 'id'> & LoginResponse {
     const { password, id, ...rest } = user;
     return {
       access_token: this.signToken({ email: user.email, uuid: user.uuid }),
@@ -72,9 +72,12 @@ export class AuthService {
   }
 
   private signToken(payload: { email: User['email']; uuid: User['uuid'] }) {
+    const secret = this.configService.getOrThrow('SECRET_KEY');
+    const expiresIn = this.configService.getOrThrow('TOKEN_EXPIRATION_TIME');
+
     return this.jwtService.sign(payload, {
-      secret: this.configService.get('SECRET_KEY'),
-      expiresIn: '7d',
+      secret,
+      expiresIn,
     });
   }
 }

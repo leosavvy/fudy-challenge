@@ -60,15 +60,16 @@ describe('UserService', () => {
       it('should throw a bad request exception', async () => {
         const email = SWAGGER_EMAIL_EXAMPLE;
         const password = SWAGGER_PASSWORD_EXAMPLE;
-        jest.spyOn(userPersistence, 'findUserByEmail').mockResolvedValueOnce(undefined);
-        jest.spyOn(userPersistence, 'createUser').mockResolvedValueOnce({
+        const mockUser = {
           password: 'example',
           email,
           id: 1,
           createdAt: new Date(),
           updatedAt: null,
           uuid: getUuid(),
-        } as User);
+        } as User;
+        jest.spyOn(userPersistence, 'findUserByEmail').mockResolvedValueOnce(undefined);
+        jest.spyOn(userPersistence, 'createUser').mockResolvedValueOnce(mockUser);
 
         await service.register({ email, password });
 

@@ -90,6 +90,7 @@ export class AuthController {
   @Post('login')
   async login(@Body() dto: LoginDTO): Promise<LoginResponse['access_token']> {
     try {
+      ('asdasd');
       const { access_token } = await this.authService.login(dto.email);
 
       return access_token;
